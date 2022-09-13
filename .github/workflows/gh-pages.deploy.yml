@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NEXT_PUBLIC_BASE_PATH: /auto-githubpages
+      NEXT_PUBLIC_BASE_PATH: /GotaBit-faucet
 
     strategy:
       matrix:
