@@ -1,38 +1,40 @@
-import * as React from 'react'
+import React from 'react'
 import type { NextPage } from 'next'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import { useTranslation } from 'react-i18next'
-import ToggleTheme from 'src/components/ToggleTheme'
-import LanguageSelect from 'src/components/LanguageSelect'
+import NavBar from 'src/components/NavBar'
+import MainForm from 'src/components/MainForm'
+import { Container, Typography } from '@mui/material'
 
 const Home: NextPage = () => {
-  const { t } = useTranslation('common')
-  const { t: t1 } = useTranslation('index')
-
   return (
-    <Container maxWidth="lg">
-      <Box
-        sx={{
-          my: 5,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" color="text.primary">
-          {t('title')}
+    <>
+      <NavBar />
+      <Container maxWidth="lg">
+        <MainForm />
+        <Typography
+          sx={{
+            fontSize: ['10px', '14px'],
+            textAlign: 'center',
+            mx: 'auto',
+            my: '40px',
+            maxWidth: '540px',
+            px: [0, 0, '20px'],
+          }}
+        >
+          <Typography
+            component="span"
+            sx={{
+              color: '#D9181B',
+              mr: '4px',
+              fontSize: 'inherit',
+            }}
+          >
+            *
+          </Typography>
+          Input your wallet address above to receive GTB for testing. Each
+          wallet address can only receive 0.1 GTB for testing per day.
         </Typography>
-        <p>1</p>
-        <ToggleTheme />
-        <LanguageSelect />
-        <Typography component="h2" color="text.secondary">
-          {t1('title')}
-        </Typography>
-      </Box>
-    </Container>
+      </Container>
+    </>
   )
 }
 

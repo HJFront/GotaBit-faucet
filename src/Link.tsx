@@ -6,7 +6,15 @@ import MuiLink, { LinkProps as MuiLinkProps } from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
 
 // Add support for the sx prop for consistency with the other branches.
-const Anchor = styled('a')({})
+const Anchor = styled('a')(({ theme }) => ({
+  color: 'inherit',
+  textDecoration: 'none !important',
+  display: 'inline-block',
+  height: '100%',
+  '&:hover': {
+    color: (theme.palette.text as any)?.info,
+  },
+}))
 
 interface NextLinkComposedProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
@@ -84,7 +92,20 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       return <Anchor className={className} href={href} ref={ref} {...other} />
     }
 
-    return <MuiLink className={className} href={href} ref={ref} {...other} />
+    return (
+      <MuiLink
+        className={className}
+        href={href}
+        ref={ref}
+        {...other}
+        sx={{
+          '&:hover': {
+            color: 'text.info',
+          },
+          ...other.sx,
+        }}
+      />
+    )
   }
 
   const linkAs = linkAsProp || as
@@ -116,6 +137,12 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       ref={ref}
       {...nextjsProps}
       {...other}
+      sx={{
+        '&:hover': {
+          color: 'text.info',
+        },
+        ...other.sx,
+      }}
     />
   )
 })

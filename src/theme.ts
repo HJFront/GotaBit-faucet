@@ -1,6 +1,8 @@
-import { PaletteMode } from '@mui/material'
+import { PaletteMode, ThemeOptions } from '@mui/material'
 
-const getDesignTokens = (mode: PaletteMode) => ({
+const getDesignTokens: (mode: PaletteMode) => ThemeOptions = (
+  mode: PaletteMode
+) => ({
   palette: {
     mode,
     ...(mode === 'light'
@@ -13,8 +15,9 @@ const getDesignTokens = (mode: PaletteMode) => ({
             default: '#fff',
           },
           text: {
-            primary: '#132F4C',
-            secondary: '#5D6975',
+            primary: '#0B1B42',
+            secondary: 'rgba(11, 27, 66, 0.7)',
+            info: '#198BFE',
           },
         }
       : {
@@ -32,6 +35,30 @@ const getDesignTokens = (mode: PaletteMode) => ({
             secondary: '#5D6975',
           },
         }),
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 1050,
+      lg: 1328,
+      xl: 1536,
+    },
+  },
+
+  typography: {
+    fontFamily: ['Poppins', '-apple-system', 'Arial', 'sans-serif'].join(','),
+  },
+
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 500,
+        },
+      },
+    },
   },
 })
 
