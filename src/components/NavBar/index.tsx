@@ -19,7 +19,7 @@ const container =
 
 const NavBar = () => {
   const { t } = useTranslation('index')
-  const { address, disconnect } = useWalletManager()
+  const { address, disconnect, isConnecting } = useWalletManager()
   const [modalOpen, setModalOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -129,6 +129,7 @@ const NavBar = () => {
                   ml: '40px',
                 }}
                 onClick={handleClick}
+                loading={isConnecting}
               >
                 <Box mr="10px" fontSize="0">
                   <WalletIcon />

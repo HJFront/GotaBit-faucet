@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import KeplrIcon from './KeplrIcon'
 import WalletConnectIcon from './WalletConnectIcon'
-import { useWalletManager } from '../WalletProvider'
+import { useWalletManager, WalletType } from '../WalletProvider'
 
 interface Props {
   open: boolean
@@ -23,12 +23,14 @@ const WalletModal = ({ open, handleClose }: Props) => {
 
   const walletItems = [
     {
+      id: 'extension',
       key: 'keplr extension',
       icon: <KeplrIcon />,
       title: t('Keplr  Wallet'),
       description: t('Keplr Browser Extension'),
     },
     {
+      id: 'walletConnect',
       key: 'keplr mobile',
       icon: <WalletConnectIcon />,
       title: t('Wallet connect'),
@@ -99,7 +101,7 @@ const WalletModal = ({ open, handleClose }: Props) => {
               },
             }}
             onClick={() => {
-              connect()
+              connect(item.id as WalletType)
               handleClose()
             }}
           >

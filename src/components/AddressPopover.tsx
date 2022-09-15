@@ -35,35 +35,44 @@ const AddressPopover = ({ address, disconnect }: Props) => {
           justifyContent: 'center',
         }}
       >
-        <OutlineButton
-          onClick={disconnect}
-          sx={{
-            borderRadius: '100px',
-            px: '24px',
-            height: '38px',
-            fontWeight: 500,
-            color: '#0E86FF',
-          }}
-          disableElevation
-        >
-          {t('Cutover')}
-        </OutlineButton>
-        <GradientButton
+        <Box
           onClick={(e) => {
             e.preventDefault()
             disconnect()
           }}
-          sx={{
-            borderRadius: '100px',
-            px: '24px',
-            height: '38px',
-            fontWeight: 500,
-            ml: '14px',
-          }}
-          disableElevation
         >
-          {t('Disconnect')}
-        </GradientButton>
+          <OutlineButton
+            sx={{
+              borderRadius: '100px',
+              px: '24px',
+              height: '38px',
+              fontWeight: 500,
+              color: '#0E86FF',
+            }}
+            disableElevation
+          >
+            {t('Cutover')}
+          </OutlineButton>
+        </Box>
+        <Box
+          onClick={(e) => {
+            e.preventDefault()
+            disconnect()
+          }}
+        >
+          <GradientButton
+            sx={{
+              borderRadius: '100px',
+              px: '24px',
+              height: '38px',
+              fontWeight: 500,
+              ml: '14px',
+            }}
+            disableElevation
+          >
+            {t('Disconnect')}
+          </GradientButton>
+        </Box>
       </Box>
     </Box>
   )
