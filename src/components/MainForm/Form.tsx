@@ -110,7 +110,7 @@ const Form = () => {
           p: ['40px 20px 36px', '50px 40px 40px'],
         }}
         component="form"
-        onSubmit={(e) => {
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault()
           if (!reCaptchaValue) {
             setReCaptchaError(t('Please tick the ReCAPTCHA!'))
