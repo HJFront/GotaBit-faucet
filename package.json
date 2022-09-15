@@ -20,6 +20,7 @@
     "@mui/material": "^5.8.6",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/utils": "^1.8.0",
+    "axios": "^0.27.2",
     "copy-to-clipboard": "^3.3.2",
     "i18next": "^21.8.12",
     "i18next-browser-languagedetector": "^6.1.4",
@@ -31,7 +32,8 @@
     "react-dom": "18.2.0",
     "react-google-recaptcha": "^2.1.0",
     "react-hook-form": "^7.35.0",
-    "react-i18next": "^11.17.4"
+    "react-i18next": "^11.17.4",
+    "react-query": "^3.39.2"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.9.2",

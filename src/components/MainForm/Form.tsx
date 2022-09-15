@@ -1,9 +1,11 @@
-import { Box, MenuItem, Select, TextField } from '@mui/material'
+import { Box, MenuItem, Select, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import ReCAPTCHA from 'react-google-recaptcha'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { useMutation } from 'react-query'
+import axios from 'axios'
 
 import GradientButton from '../Buttons/GradientButton'
 import InfoModal from '../Modals/InfoModal'
@@ -19,9 +21,11 @@ interface Params {
 
 const myHelper: any = {
   address: {
-    required: 'Address is required',
+    required: 'Please input the recipient address!',
   },
 }
+
+const options = [{ id: 'ugtb', label: 'UGTB' }]
 
 const Form = () => {
   const { t } = useTranslation('index')
@@ -30,34 +34,59 @@ const Form = () => {
   const [successOpen, setSuccessOpen] = useState(false)
   const [infoOpen, setInfoOpen] = useState(false)
   const [message, setMessage] = useState('')
+  const [userAddress, setUserAddress] = useState('')
+  const [reCaptchaValue, setReCaptchaValue] = useState<string | null>(null)
+  const [reCaptchaError, setReCaptchaError] = useState<string | null>(null)
+
+  useEffect(() => {
+    reCaptchaValue && setReCaptchaError(null)
+  }, [reCaptchaValue])
 
   const { control, handleSubmit, reset } = useForm({
     reValidateMode: 'onChange',
     defaultValues: {
-      denom: 'one',
+      denom: 'ugtb',
       address: address || '',
     },
   })
 
   useEffect(() => {
     reset({
-      denom: 'one',
+      denom: 'ugtb',
       address: address || '',
     })
   }, [address, reset])
 
-  const options = [
-    { id: 'one', label: 'One' },
-    { id: 'two', label: 'Two' },
-    { id: 'three', label: 'Three' },
-  ]
+  const { isLoading, mutate } = useMutation(
+    (data: Params) => axios.post('https://faucet.hjcore.io/credit', data),
+    {
+      onSuccess({ data }) {
+        if (data?.code === 200) {
+          setSuccessOpen(true)
+        } else {
+          setInfoOpen(true)
+          setMessage(data?.message)
+        }
+      },
+      onError(error: any) {
+        setInfoOpen(true)
+        setMessage(error?.message)
+      },
+    }
+  )
 
-  const handleOnSubmit = (event: Params) => {
-    console.log(event)
+  const handleOnSubmit = (data: Params) => {
+    if (!reCaptchaValue) {
+      setReCaptchaError(t('Please tick the ReCAPTCHA!'))
+      return
+    }
+
+    mutate(data)
+    setUserAddress(data.address)
   }
 
   const handleOnChange = (value: string | null) => {
-    console.log('Captcha value:', value)
+    setReCaptchaValue(value)
     // if value is null recaptcha expired
     if (value === null) {
       // this.setState({ expired: 'true' })
@@ -81,7 +110,14 @@ const Form = () => {
           p: ['40px 20px 36px', '50px 40px 40px'],
         }}
         component="form"
-        onSubmit={handleSubmit(handleOnSubmit)}
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!reCaptchaValue) {
+            setReCaptchaError(t('Please tick the ReCAPTCHA!'))
+          }
+
+          handleSubmit(handleOnSubmit)()
+        }}
       >
         <Controller
           control={control}
@@ -185,6 +221,7 @@ const Form = () => {
             mb: '40px',
           }}
           type="submit"
+          loading={isLoading}
         >
           {t('Get Test Coins')}
         </GradientButton>
@@ -199,10 +236,24 @@ const Form = () => {
             sitekey={CAPTCHA_KEY}
             onChange={handleOnChange}
           />
+          {reCaptchaError && (
+            <Typography
+              sx={{
+                color: '#d32f2f',
+                fontSize: '0.75rem',
+                textAlign: 'left',
+                mt: '3px',
+                mx: '14px',
+              }}
+            >
+              {reCaptchaError}
+            </Typography>
+          )}
         </Box>
       </Box>
 
       <SuccessModal
+        address={userAddress}
         open={successOpen}
         handleClose={() => setSuccessOpen(false)}
       />

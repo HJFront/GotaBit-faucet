@@ -16,15 +16,16 @@ import SuccessIcon from './SuccessIcon'
 import OutlineButton from '../Buttons/OutlineButton'
 
 interface Props {
+  address: string
   open: boolean
   handleClose: VoidFunction
 }
 
-const SuccessModal = ({ open, handleClose }: Props) => {
+const SuccessModal = ({ open, handleClose, address }: Props) => {
   const { t } = useTranslation('index')
 
   const handleCopy = () => {
-    const result = copy('aaa')
+    const result = copy(address)
     if (result) {
       console.log('Success')
     } else {
@@ -110,7 +111,7 @@ const SuccessModal = ({ open, handleClose }: Props) => {
                 textOverflow: 'ellipsis',
               }}
             >
-              terra1zzj77fx5fxymw6z7v76p76v5nag3n7ta6m0tpjterra1zzj77fx5fxymw6z7v76p76v5nag3n7ta6m0tpj
+              {address}
             </Typography>
             <Box
               sx={{
