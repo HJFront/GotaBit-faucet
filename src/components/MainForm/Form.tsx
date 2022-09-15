@@ -1,5 +1,5 @@
 import { Box, MenuItem, Select, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import ReCAPTCHA from 'react-google-recaptcha'
@@ -8,6 +8,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import GradientButton from '../Buttons/GradientButton'
 import InfoModal from '../Modals/InfoModal'
 import SuccessModal from '../Modals/SuccessModal'
+import { useWalletManager } from '../WalletProvider'
 
 const CAPTCHA_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
 
@@ -24,6 +25,7 @@ const myHelper: any = {
 
 const Form = () => {
   const { t } = useTranslation('index')
+  const { address } = useWalletManager()
 
   const [successOpen, setSuccessOpen] = useState(false)
   const [infoOpen, setInfoOpen] = useState(false)
@@ -33,9 +35,16 @@ const Form = () => {
     reValidateMode: 'onChange',
     defaultValues: {
       denom: 'one',
-      address: '',
+      address: address || '',
     },
   })
+
+  useEffect(() => {
+    reset({
+      denom: 'one',
+      address: address || '',
+    })
+  }, [address, reset])
 
   const options = [
     { id: 'one', label: 'One' },

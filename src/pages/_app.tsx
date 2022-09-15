@@ -6,6 +6,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react'
 import createEmotionCache from '../createEmotionCache'
 import InitTheme from '../components/InitTheme'
 import InitI18n from '../components/InitI18n'
+import WalletProvider from 'src/components/WalletProvider'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -25,7 +26,9 @@ export default function MyApp(props: MyAppProps) {
         <InitTheme>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
-          <Component {...pageProps} />
+          <WalletProvider>
+            <Component {...pageProps} />
+          </WalletProvider>
         </InitTheme>
       </CacheProvider>
     </InitI18n>

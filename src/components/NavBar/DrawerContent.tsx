@@ -1,18 +1,41 @@
-import { AccordionSummary, Box, Container, Typography } from '@mui/material'
-import React from 'react'
+import {
+  AccordionSummary,
+  Box,
+  ClickAwayListener,
+  Container,
+  Typography,
+} from '@mui/material'
+import React, { useState } from 'react'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import Logo from './Logo'
 import { useTranslation } from 'react-i18next'
+import { isMobile } from 'react-device-detect'
+
 import Link from 'src/Link'
 import GradientButton from '../Buttons/GradientButton'
 import WalletIcon from './WalletIcon'
+import { useWalletManager } from '../WalletProvider'
+import { formatAddress } from 'src/utils'
+import AddressPopover from '../AddressPopover'
+import MyTooltip from '../MyTooltip'
 
 interface Props {
   onClose: VoidFunction
+  onConnect: VoidFunction
 }
 
-const DrawerContent = ({ onClose }: Props) => {
+const DrawerContent = ({ onClose, onConnect }: Props) => {
   const { t } = useTranslation('index')
+  const { address, disconnect } = useWalletManager()
+  const [open, setOpen] = useState(false)
+
+  const handleTooltipClose = () => {
+    setOpen(false)
+  }
+
+  const handleTooltipOpen = () => {
+    setOpen(!open)
+  }
 
   return (
     <Box
@@ -126,27 +149,43 @@ const DrawerContent = ({ onClose }: Props) => {
         </Box>
       </Box>
 
-      <Box px="20px" pb="24px">
-        <Link href="" sx={{ width: '100%' }}>
-          <GradientButton
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '56px',
-              borderRadius: '100px',
-              fontWeight: 400,
-              fontSize: '16px',
-              width: '100%',
-            }}
+      <ClickAwayListener onClickAway={handleTooltipClose}>
+        <Box px="20px" pb="24px" onClick={handleTooltipOpen}>
+          <MyTooltip
+            arrow
+            title={
+              (address && (
+                <AddressPopover address={address} disconnect={disconnect} />
+              )) ||
+              ''
+            }
+            onClose={handleTooltipClose}
+            open={isMobile ? open : undefined}
+            disableFocusListener={isMobile ? true : undefined}
+            disableHoverListener={isMobile ? true : undefined}
+            disableTouchListener={isMobile ? true : undefined}
           >
-            <Box mr="10px" fontSize="0">
-              <WalletIcon />
-            </Box>
-            {t('Connect Wallet')}
-          </GradientButton>
-        </Link>
-      </Box>
+            <GradientButton
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '56px',
+                borderRadius: '100px',
+                fontWeight: 400,
+                fontSize: '16px',
+                width: '100%',
+              }}
+              onClick={onConnect}
+            >
+              <Box mr="10px" fontSize="0">
+                <WalletIcon />
+              </Box>
+              {address ? formatAddress(address) : t('Connect Wallet')}
+            </GradientButton>
+          </MyTooltip>
+        </Box>
+      </ClickAwayListener>
     </Box>
   )
 }

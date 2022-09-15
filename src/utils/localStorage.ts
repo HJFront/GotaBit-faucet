@@ -5,5 +5,12 @@ export const getLocalStorage = (key: string) => {
   return null
 }
 
+export const removeLocalStorage = (key: string) => {
+  if (typeof window !== 'undefined') {
+    return window.localStorage.removeItem(key)
+  }
+  return null
+}
+
 export const setLocalStorage = (key: string, value: string) =>
   typeof window !== 'undefined' && window.localStorage.setItem(key, value)

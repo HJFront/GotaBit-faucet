@@ -2,8 +2,12 @@ import { Box, Container, Drawer, IconButton, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Link from 'src/Link'
+import { formatAddress } from 'src/utils'
+import AddressPopover from '../AddressPopover'
 import GradientButton from '../Buttons/GradientButton'
 import WalletModal from '../Modals/WalletModal'
+import MyTooltip from '../MyTooltip'
+import { useWalletManager } from '../WalletProvider'
 import DrawerContent from './DrawerContent'
 import Logo from './Logo'
 import MenuIcon from './MenuIcon'
@@ -15,6 +19,7 @@ const container =
 
 const NavBar = () => {
   const { t } = useTranslation('index')
+  const { address, disconnect } = useWalletManager()
   const [modalOpen, setModalOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -23,6 +28,7 @@ const NavBar = () => {
   }
 
   const handleClick = () => {
+    if (address) return
     setModalOpen(true)
   }
 
@@ -101,25 +107,35 @@ const NavBar = () => {
             >
               {t('Documentation')}
             </Link>
-            <GradientButton
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '48px',
-                px: '20px',
-                borderRadius: '24px',
-                fontWeight: 400,
-                fontSize: '16px',
-                ml: '40px',
-              }}
-              onClick={handleClick}
+            <MyTooltip
+              arrow
+              title={
+                (address && (
+                  <AddressPopover address={address} disconnect={disconnect} />
+                )) ||
+                ''
+              }
             >
-              <Box mr="10px" fontSize="0">
-                <WalletIcon />
-              </Box>
-              {t('Connect Wallet')}
-            </GradientButton>
+              <GradientButton
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '48px',
+                  px: '20px',
+                  borderRadius: '24px',
+                  fontWeight: 400,
+                  fontSize: '16px',
+                  ml: '40px',
+                }}
+                onClick={handleClick}
+              >
+                <Box mr="10px" fontSize="0">
+                  <WalletIcon />
+                </Box>
+                {address ? formatAddress(address) : t('Connect Wallet')}
+              </GradientButton>
+            </MyTooltip>
           </Box>
           <IconButton
             color="primary"
@@ -151,7 +167,7 @@ const NavBar = () => {
             backgroundColor: ['transparent'],
           }}
         >
-          <DrawerContent onClose={handleDrawerToggle} />
+          <DrawerContent onConnect={handleClick} onClose={handleDrawerToggle} />
         </Drawer>
       </Box>
       <WalletModal open={modalOpen} handleClose={() => setModalOpen(false)} />

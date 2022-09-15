@@ -23,6 +23,7 @@
     "i18next-http-backend": "^1.4.1",
     "next": "12.2.0",
     "react": "18.2.0",
+    "react-device-detect": "^2.2.2",
     "react-dom": "18.2.0",
     "react-google-recaptcha": "^2.1.0",
     "react-hook-form": "^7.35.0",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.9.2",
+    "@keplr-wallet/types": "^0.10.24",
     "@types/node": "18.0.1",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
