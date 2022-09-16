@@ -1,22 +1,26 @@
 import { Box, MenuItem, Select, TextField, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import ReCAPTCHA from 'react-google-recaptcha'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { useMutation } from 'react-query'
 import axios from 'axios'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 import GradientButton from '../Buttons/GradientButton'
 import InfoModal from '../Modals/InfoModal'
 import SuccessModal from '../Modals/SuccessModal'
 import { useWalletManager } from '../WalletProvider'
 
-const CAPTCHA_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-
+const CAPTCHA_KEY = '3e84a635-42cd-4f1e-b5e1-4abb6698380c'
 interface Params {
   denom: string
   address: string
+}
+interface Variables {
+  'h-captcha-response': string
+  service: string
+  payload: Params
 }
 
 const myHelper: any = {
@@ -35,30 +39,34 @@ const Form = () => {
   const [infoOpen, setInfoOpen] = useState(false)
   const [message, setMessage] = useState('')
   const [userAddress, setUserAddress] = useState('')
-  const [reCaptchaValue, setReCaptchaValue] = useState<string | null>(null)
-  const [reCaptchaError, setReCaptchaError] = useState<string | null>(null)
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null)
+  const [captchaError, setCaptchaError] = useState<string | null>(null)
+
+  const captchaRef: any = useRef(null)
+  const captchaErrorTip = t('Please tick the CAPTCHA!')
+  const defaultValues = useMemo(
+    () => ({
+      denom: 'ugtb',
+      address: address || '',
+    }),
+    [address]
+  )
 
   useEffect(() => {
-    reCaptchaValue && setReCaptchaError(null)
-  }, [reCaptchaValue])
+    captchaValue && setCaptchaError(null)
+  }, [captchaValue])
 
   const { control, handleSubmit, reset } = useForm({
     reValidateMode: 'onChange',
-    defaultValues: {
-      denom: 'ugtb',
-      address: address || '',
-    },
+    defaultValues,
   })
 
   useEffect(() => {
-    reset({
-      denom: 'ugtb',
-      address: address || '',
-    })
-  }, [address, reset])
+    reset(defaultValues)
+  }, [defaultValues, reset])
 
   const { isLoading, mutate } = useMutation(
-    (data: Params) => axios.post('https://faucet.hjcore.io/credit', data),
+    (data: Variables) => axios.post('https://hcaptcha.gotabit.io/', data),
     {
       onSuccess({ data }) {
         if (data?.code === 200) {
@@ -67,30 +75,36 @@ const Form = () => {
           setInfoOpen(true)
           setMessage(data?.message)
         }
+        setCaptchaValue(null)
+        captchaRef?.current?.resetCaptcha()
       },
       onError(error: any) {
         setInfoOpen(true)
-        setMessage(error?.message)
+        setMessage(error?.response?.data.message)
+        setCaptchaValue(null)
+        captchaRef?.current?.resetCaptcha()
       },
     }
   )
 
   const handleOnSubmit = (data: Params) => {
-    if (!reCaptchaValue) {
-      setReCaptchaError(t('Please tick the ReCAPTCHA!'))
+    if (!captchaValue) {
+      setCaptchaError(t(captchaErrorTip))
       return
     }
 
-    mutate(data)
+    const variables = {
+      'h-captcha-response': captchaValue,
+      service: 'faucet',
+      payload: data,
+    }
+
+    mutate(variables)
     setUserAddress(data.address)
   }
 
-  const handleOnChange = (value: string | null) => {
-    setReCaptchaValue(value)
-    // if value is null recaptcha expired
-    if (value === null) {
-      // this.setState({ expired: 'true' })
-    }
+  const handleVerify = (token: string, ekey: string) => {
+    setCaptchaValue(token)
   }
 
   return (
@@ -112,8 +126,8 @@ const Form = () => {
         component="form"
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault()
-          if (!reCaptchaValue) {
-            setReCaptchaError(t('Please tick the ReCAPTCHA!'))
+          if (!captchaValue) {
+            setCaptchaError(t(captchaErrorTip))
           }
 
           handleSubmit(handleOnSubmit)()
@@ -231,12 +245,13 @@ const Form = () => {
             fontSize: 0,
           }}
         >
-          <ReCAPTCHA
-            style={{ display: 'inline-block' }}
+          <HCaptcha
             sitekey={CAPTCHA_KEY}
-            onChange={handleOnChange}
+            onVerify={handleVerify}
+            onExpire={() => setCaptchaValue(t('Token expired!'))}
+            ref={captchaRef}
           />
-          {reCaptchaError && (
+          {captchaError && (
             <Typography
               sx={{
                 color: '#d32f2f',
@@ -246,7 +261,7 @@ const Form = () => {
                 mx: '14px',
               }}
             >
-              {reCaptchaError}
+              {captchaError}
             </Typography>
           )}
         </Box>

@@ -77,7 +77,7 @@ const NavBar = () => {
           >
             <Link
               color="text.primary"
-              href="https://docs.hjcore.io/"
+              href="https://hjfront.github.io/GotaBit-website/"
               target="_blank"
               rel="noopener"
               sx={{

@@ -5,7 +5,7 @@ import {
   DialogContentText,
   Typography,
 } from '@mui/material'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import copy from 'copy-to-clipboard'
@@ -23,15 +23,21 @@ interface Props {
 
 const SuccessModal = ({ open, handleClose, address }: Props) => {
   const { t } = useTranslation('index')
+  const [showTip, setShowTip] = useState(false)
 
   const handleCopy = () => {
     const result = copy(address)
     if (result) {
       console.log('Success')
+      setShowTip(true)
     } else {
       console.error('Failed to copy')
     }
   }
+
+  useEffect(() => {
+    showTip && setTimeout(() => setShowTip(false), 1300)
+  }, [showTip])
 
   return (
     <Dialog
@@ -159,6 +165,23 @@ const SuccessModal = ({ open, handleClose, address }: Props) => {
           {t('Definite')}
         </GradientButton>
       </Box>
+      {showTip && (
+        <Typography
+          sx={{
+            position: 'fixed',
+            top: '46%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            px: '20px',
+            py: '10px',
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            borderRadius: '50px',
+            color: '#fff',
+          }}
+        >
+          {t('Copied!')}
+        </Typography>
+      )}
     </Dialog>
   )
 }

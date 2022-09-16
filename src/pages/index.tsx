@@ -3,10 +3,14 @@ import type { NextPage } from 'next'
 import NavBar from 'src/components/NavBar'
 import MainForm from 'src/components/MainForm'
 import { Container, Typography } from '@mui/material'
+import Head from 'next/head'
 
 const Home: NextPage = () => {
   return (
     <>
+      <Head>
+        <title>GotaBit Faucet</title>
+      </Head>
       <NavBar />
       <Container maxWidth="lg">
         <MainForm />

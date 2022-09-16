@@ -15,6 +15,7 @@
     "@emotion/react": "^11.9.3",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.9.3",
+    "@hcaptcha/react-hcaptcha": "^1.4.4",
     "@mui/icons-material": "^5.10.3",
     "@mui/lab": "^5.0.0-alpha.99",
     "@mui/material": "^5.8.6",
@@ -30,7 +31,6 @@
     "react": "18.2.0",
     "react-device-detect": "^2.2.2",
     "react-dom": "18.2.0",
-    "react-google-recaptcha": "^2.1.0",
     "react-hook-form": "^7.35.0",
     "react-i18next": "^11.17.4",
     "react-query": "^3.39.2"
