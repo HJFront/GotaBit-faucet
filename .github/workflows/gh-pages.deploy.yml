@@ -6,11 +6,8 @@ on:
 
 jobs:
   build:
+    environment: gh-pages
     runs-on: ubuntu-latest
-
-    env:
-      NEXT_PUBLIC_BASE_PATH: /GotaBit-faucet
-      PER_DAY_TEST_TOKEN: ${{ secrets.PER_DAY_TEST_TOKEN }}
 
     strategy:
       matrix:
@@ -33,6 +30,9 @@ jobs:
         run: touch ./out/.nojekyll
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.1
+        env:
+          NEXT_PUBLIC_BASE_PATH: /GotaBit-faucet
+          PER_DAY_TEST_TOKEN: ${{ secrets.PER_DAY_TEST_TOKEN }}
         with:
           branch: gh-pages
           folder: out
