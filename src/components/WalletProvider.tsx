@@ -1,6 +1,5 @@
 import React, { PropsWithChildren, useState } from 'react'
-import WalletConnect from '@walletconnect/client'
-import { payloadId } from '@walletconnect/utils'
+import { GotaBit } from 'gotabit'
 
 import { useEagerConnect } from 'src/hooks/useEagerConnect'
 import { AUTO_CONNECT, ChainInfo } from 'src/utils/constant'
@@ -25,46 +24,38 @@ const WalletProvider = ({ children }: PropsWithChildren<Props>) => {
   const [isConnecting, setIsConnecting] = useState(false)
 
   const connect = async (walletType: WalletType) => {
-    const chainId = ChainInfo.chainId
+    const chainId = 'test'
 
     if (walletType === 'extension') {
-      await window?.keplr?.experimentalSuggestChain(ChainInfo)
-      await window?.keplr?.enable?.(chainId)
-      const offlineSigner = window?.getOfflineSigner?.(chainId)
-      const accounts = await offlineSigner?.getAccounts()
-      setAddress(accounts?.[0].address)
+      const gotabit = await GotaBit.init(chainId, {
+        type: 'keplr',
+      })
+
+      const [{ address }] = (await gotabit?.wallet?.getAccounts?.()) || [{}]
+
+      setAddress(address)
       setLocalStorage(AUTO_CONNECT, 'extension')
     } else {
       // wallet-connect
-      const connector = new WalletConnect({
-        bridge: 'https://bridge.walletconnect.org', // Required
-        qrcodeModal: {
-          open: (uri: string) => {
-            setIsConnecting(true)
-            setWCUri(uri)
+      const gotabit = await GotaBit.init(chainId, {
+        type: 'walletconnect',
+        walletconnectParams: {
+          signOpts: {
+            logger: 'debug',
+            relayUrl: 'wss://relay.gotabit.dev',
+            projectId: '2c921904d8ebc91517cd11c1cc4a267f',
+            metadata: {
+              name: 'Gotabit SDK WalletConnect test',
+              description: 'Gotabit SDK WalletConnect test',
+              url: 'https://sdk.gotabit.dev',
+              icons: [`https:\/\/res.gotabit.io\/svg\/icon.svg`],
+            },
           },
-          close: () => setWCUri(''),
         },
       })
-      try {
-        if (!connector.connected) {
-          await connector.connect()
-        }
-        const { accounts } = await connector.sendCustomRequest({
-          id: payloadId(),
-          jsonrpc: '2.0',
-          method: 'keplr_enable_wallet_connect_v1',
-          params: [chainId],
-        })
-        setAddress(accounts?.[0])
-        console.log('2')
-      } catch (e: any) {
-        console.log(e?.message)
-        if (e?.message !== 'Session currently disconnected') {
-          alert(e?.message)
-        }
-      }
-      setIsConnecting(false)
+      const [{ address }] = (await gotabit?.wallet?.getAccounts?.()) || [{}]
+
+      setAddress(address)
     }
   }
   const disconnect = () => {

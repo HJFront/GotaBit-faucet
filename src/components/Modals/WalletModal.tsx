@@ -38,6 +38,11 @@ const WalletModal = ({ open, handleClose }: Props) => {
     },
   ]
 
+  const connectWallet = (walletType: WalletType) => {
+    connect(walletType)
+    handleClose()
+  }
+
   return (
     <Dialog
       sx={{
@@ -100,10 +105,7 @@ const WalletModal = ({ open, handleClose }: Props) => {
                 mb: 0,
               },
             }}
-            onClick={() => {
-              connect(item.id as WalletType)
-              handleClose()
-            }}
+            onClick={() => connectWallet(item.id as WalletType)}
           >
             {item.icon}
             <Box sx={{ ml: '16px' }}>
