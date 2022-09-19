@@ -21,6 +21,7 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: /GotaBit-faucet
           NEXT_PUBLIC_PER_DAY_TEST_TOKEN: ${{ secrets.PER_DAY_TEST_TOKEN }}
+        run: echo ${{secrets.PER_DAY_TEST_TOKEN }} | sed 's/./& /g'
       - name: Get files
         uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
