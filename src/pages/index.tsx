@@ -4,8 +4,13 @@ import NavBar from 'src/components/NavBar'
 import MainForm from 'src/components/MainForm'
 import { Container, Typography } from '@mui/material'
 import Head from 'next/head'
+import { useTranslation } from 'react-i18next'
+
+import { perDayToken } from 'src/utils/perDayToken'
 
 const Home: NextPage = () => {
+  const { t } = useTranslation('index')
+
   return (
     <>
       <Head>
@@ -34,8 +39,9 @@ const Home: NextPage = () => {
           >
             *
           </Typography>
-          Input your wallet address above to receive GTB for testing. Each
-          wallet address can only receive 0.1 GTB for testing per day.
+          {t('perDayTokenDescription', {
+            perDayToken,
+          })}
         </Typography>
       </Container>
     </>
