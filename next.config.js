@@ -8,7 +8,7 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH,
-    PER_DAY_TEST_TOKEN: process.env.PER_DAY_TEST_TOKEN,
+    NEXT_PUBLIC_PER_DAY_TEST_TOKEN: process.env.NEXT_PUBLIC_PER_DAY_TEST_TOKEN,
   }
 }
 

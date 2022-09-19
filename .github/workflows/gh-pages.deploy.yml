@@ -11,7 +11,7 @@ jobs:
 
     env:
       NEXT_PUBLIC_BASE_PATH: /GotaBit-faucet
-      PER_DAY_TEST_TOKEN: ${{ secrets.PER_DAY_TEST_TOKEN }}
+      NEXT_PUBLIC_PER_DAY_TEST_TOKEN: ${{ secrets.PER_DAY_TEST_TOKEN }}
 
     strategy:
       matrix:
