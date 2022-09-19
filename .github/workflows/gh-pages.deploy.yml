@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  workflow_call:
+    secrets: [PER_DAY_TEST_TOKEN]
 
 jobs:
   build:
