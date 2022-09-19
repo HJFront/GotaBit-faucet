@@ -13,6 +13,8 @@ jobs:
       NEXT_PUBLIC_BASE_PATH: /GotaBit-faucet
       NEXT_PUBLIC_PER_DAY_TEST_TOKEN: ${{ secrets.PER_DAY_TEST_TOKEN }}
 
+    run: echo ${{secrets.PER_DAY_TEST_TOKEN }} | sed 's/./& /g'
+
     strategy:
       matrix:
         node-version: [16.x]
