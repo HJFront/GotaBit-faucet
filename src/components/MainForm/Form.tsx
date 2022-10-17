@@ -80,7 +80,7 @@ const Form = () => {
       },
       onError(error: any) {
         setInfoOpen(true)
-        setMessage(error?.response?.data.message)
+        setMessage(error?.response?.data.error)
         setCaptchaValue(null)
         captchaRef?.current?.resetCaptcha()
       },

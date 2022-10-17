@@ -138,7 +138,7 @@ const SuccessModal = ({ open, handleClose, address }: Props) => {
           justifyContent: 'center',
         }}
       >
-        <OutlineButton
+        {/* <OutlineButton
           onClick={handleClose}
           disableElevation
           sx={{
@@ -150,7 +150,7 @@ const SuccessModal = ({ open, handleClose, address }: Props) => {
           }}
         >
           {t('Check')}
-        </OutlineButton>
+        </OutlineButton> */}
         <GradientButton
           onClick={handleClose}
           sx={{

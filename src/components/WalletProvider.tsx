@@ -1,11 +1,16 @@
-import React, { PropsWithChildren, useState } from 'react'
-import { GotaBit } from 'gotabit'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 
 import { useEagerConnect } from 'src/hooks/useEagerConnect'
 import { AUTO_CONNECT, ChainInfo } from 'src/utils/constant'
 import createContext from 'src/utils/createContext'
 import { removeLocalStorage, setLocalStorage } from 'src/utils/localStorage'
 import WalletConnectQRCodeModal from './Modals/WalletConnectQRCodeModal'
+import {
+  keplrConnector,
+  useKeplrAccount,
+  useKeplrActive,
+  walletconnectConnector,
+} from 'src/pages/_app'
 
 interface Props {}
 
@@ -19,51 +24,46 @@ export const [useWalletManager, WalletManagerProvider] = createContext<{
 }>('useWalletManager')
 
 const WalletProvider = ({ children }: PropsWithChildren<Props>) => {
+  const active = useKeplrActive()
+  const account = useKeplrAccount()
+
   const [address, setAddress] = useState<string>()
   const [wcUri, setWCUri] = useState('')
   const [isConnecting, setIsConnecting] = useState(false)
+  const [connector, setConnector] = useState<
+    | Awaited<ReturnType<typeof keplrConnector>>
+    | Awaited<ReturnType<typeof walletconnectConnector>>
+    | null
+  >()
 
   const connect = async (walletType: WalletType) => {
     const chainId = 'test'
 
     if (walletType === 'extension') {
-      const gotabit = await GotaBit.init(chainId, {
-        type: 'keplr',
-      })
-
-      const [{ address }] = (await gotabit?.wallet?.getAccounts?.()) || [{}]
-
-      setAddress(address)
+      const _connector = await keplrConnector()
+      setConnector(_connector)
       setLocalStorage(AUTO_CONNECT, 'extension')
     } else {
       // wallet-connect
-      const gotabit = await GotaBit.init(chainId, {
-        type: 'walletconnect',
-        walletconnectParams: {
-          signOpts: {
-            logger: 'debug',
-            relayUrl: 'wss://relay.gotabit.dev',
-            projectId: '2c921904d8ebc91517cd11c1cc4a267f',
-            metadata: {
-              name: 'Gotabit SDK WalletConnect test',
-              description: 'Gotabit SDK WalletConnect test',
-              url: 'https://sdk.gotabit.dev',
-              icons: [`https:\/\/res.gotabit.io\/svg\/icon.svg`],
-            },
-          },
-        },
-      })
-      const [{ address }] = (await gotabit?.wallet?.getAccounts?.()) || [{}]
-
-      setAddress(address)
+      const _connector = await walletconnectConnector()
+      setConnector(_connector)
     }
   }
+
   const disconnect = () => {
     removeLocalStorage(AUTO_CONNECT)
     setAddress(undefined)
+    connector?.disconnect()
+    setConnector(null)
   }
 
   useEagerConnect(connect)
+
+  useEffect(() => {
+    if (active) {
+      setAddress(account)
+    }
+  }, [active, account])
 
   return (
     <WalletManagerProvider

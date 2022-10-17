@@ -106,7 +106,7 @@ const InfoModal = ({ message, open, handleClose }: Props) => {
         >
           {t('Cancel')}
         </OutlineButton>
-        <GradientButton
+        {/* <GradientButton
           onClick={handleClose}
           sx={{
             borderRadius: '100px',
@@ -118,7 +118,7 @@ const InfoModal = ({ message, open, handleClose }: Props) => {
           disableElevation
         >
           {t('Definite')}
-        </GradientButton>
+        </GradientButton> */}
       </Box>
     </Dialog>
   )
